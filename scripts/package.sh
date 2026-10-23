@@ -3,7 +3,7 @@
 #
 #   Linux   -> AppImage e .deb
 #   macOS   -> .dmg (com o myqtapp.app dentro)
-#   Windows -> instalador .exe e .zip portátil (rodar no Git Bash)
+#   Windows -> instalador .exe e .zip portátil (rodar no Git Bash; ou use scripts/package.ps1)
 #
 # Cada formato só pode ser gerado no próprio sistema: o .exe precisa do Qt/MSVC do Windows
 # e o .dmg precisa do macdeployqt/SDK da Apple. Para gerar todos a partir do Linux,

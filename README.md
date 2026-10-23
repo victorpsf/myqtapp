@@ -2,6 +2,8 @@
 
 Aplicação Qt 6 (Widgets) em C++17 com fluxo de login em 3 etapas: usuário/e-mail → senha → 2FA.
 
+> Passo a passo de instalação e de ambiente de desenvolvimento para Linux, macOS e Windows: [docs/INSTALACAO.md](docs/INSTALACAO.md).
+
 ## Build
 
 ```bash
@@ -46,7 +48,8 @@ make deb                # só o .deb
 |---|---|---|
 | Linux | `scripts/package.sh` | `myqtapp-<versão>-x86_64.AppImage` e `myqtapp_<versão>_amd64.deb` |
 | macOS | `QT_PATH=~/Qt/6.8.3/macos scripts/package.sh` | `myqtapp-<versão>-Darwin.dmg` |
-| Windows (Git Bash) | `QT_PATH=C:/Qt/6.8.3/msvc2022_64 scripts/package.sh` | instalador `myqtapp-<versão>-win64.exe` e `.zip` portátil |
+| Windows (PowerShell) | `scripts\package.cmd` ou `scripts\package.ps1 -QtPath C:\Qt\6.8.3\msvc2022_64` | instalador `myqtapp-<versão>-win64.exe` e `.zip` portátil |
+| Windows (Git Bash) | `QT_PATH=C:/Qt/6.8.3/msvc2022_64 scripts/package.sh` | o mesmo |
 
 Cada formato só pode ser gerado no próprio sistema. Para gerar todos a partir do Linux, suba o projeto no
 GitHub e rode o workflow **Pacotes** (`.github/workflows/packages.yml`) em *Actions → Run workflow* ou
@@ -59,7 +62,8 @@ Requisitos:
   e embute Qt e OpenSSL; o `.deb` usa o Qt do sistema (declara as dependências automaticamente).
 - **macOS:** Qt 6.5+ pelo instalador oficial e `brew install cmake openssl@3`.
 - **Windows:** Qt 6.5+ (MSVC) pelo instalador oficial, Visual Studio, CMake, [OpenSSL](https://slproweb.com/products/Win32OpenSSL.html)
-  e NSIS (`winget install NSIS.NSIS`). Rode o script no Git Bash.
+  e NSIS (`winget install NSIS.NSIS`). O `package.ps1` acha sozinho o Qt mais novo em `C:\Qt` e o OpenSSL em
+  `C:\Program Files\OpenSSL-Win64`; veja as opções com `Get-Help scripts\package.ps1 -Detailed`.
 
 O `.env` do projeto (ou o `.env.example`, se não houver) é embutido; use `ENV_FILE=caminho/.env` para outro.
 Para trocar os domínios depois de instalado, crie `~/.config/myqtapp/.env` (ou, no AppImage, um `.env` ao

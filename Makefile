@@ -15,7 +15,14 @@ ifneq ($(strip $(QT_PATH)),)
 CMAKE_ARGS += -DCMAKE_PREFIX_PATH=$(QT_PATH)
 endif
 
-APP := $(BUILD_DIR)/myqtapp
+# No macOS o executável fica dentro do bundle myqtapp.app
+ifeq ($(shell uname -s),Darwin)
+APP_EXE := ./myqtapp.app/Contents/MacOS/myqtapp
+DEBUGGER := lldb
+else
+APP_EXE := ./myqtapp
+DEBUGGER := gdb -q
+endif
 
 ifeq ($(shell command -v cmake 2>/dev/null),)
 $(error cmake não encontrado. Instale com: sudo apt install cmake build-essential qt6-base-dev libssl-dev gdb)
@@ -35,10 +42,10 @@ build: $(BUILD_DIR)/CMakeCache.txt
 	cmake --build $(BUILD_DIR) -j $(JOBS)
 
 run: build
-	cd $(BUILD_DIR) && ./myqtapp
+	cd $(BUILD_DIR) && $(APP_EXE)
 
 debug: build
-	cd $(BUILD_DIR) && gdb -q ./myqtapp
+	cd $(BUILD_DIR) && $(DEBUGGER) $(APP_EXE)
 
 clean:
 	rm -rf $(BUILD_DIR)
