@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=MyQtApp
+Comment=Controle financeiro e ferramentas de segurança
+Exec=myqtapp
+Icon=myqtapp
+Categories=Utility;
+Terminal=false
+X-AppImage-Version=0.1.0

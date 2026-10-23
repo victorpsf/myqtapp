@@ -1,0 +1,72 @@
+# Gera AppImage + .deb (Linux), .dmg (macOS) e .exe + .zip (Windows).
+# Rode em Actions > Pacotes > Run workflow, ou crie uma tag v* (ex.: v0.1.0).
+# Os arquivos ficam nos "Artifacts" da execução.
+name: Pacotes
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+env:
+  QT_VERSION: "6.8.3"
+
+jobs:
+  linux:
+    # Ubuntu mais antigo: o AppImage roda em mais distribuições (glibc menor)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependências
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential qt6-base-dev qt6-base-dev-tools \
+            qt6-wayland libssl-dev libgl1-mesa-dev dpkg-dev file curl
+      - name: Pacotes
+        run: scripts/package.sh appimage deb
+        env:
+          PACKAGE_MAINTAINER: ${{ vars.PACKAGE_MAINTAINER }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: dist/*
+
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          cache: true
+      - name: Dependências
+        run: brew install openssl@3
+      - name: Pacotes
+        run: QT_PATH="$QT_ROOT_DIR" scripts/package.sh dmg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: dist/*
+
+  windows:
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: win64_msvc2022_64
+          cache: true
+      # OpenSSL já vem na imagem do runner (C:\Program Files\OpenSSL); o NSIS gera o instalador
+      - name: Dependências
+        shell: pwsh
+        run: choco install nsis --no-progress -y
+      - name: Pacotes
+        run: QT_PATH="$QT_ROOT_DIR" scripts/package.sh exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/*
